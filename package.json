@@ -1,0 +1,26 @@
+{
+  "name": "homework10",
+  "version": "1.0.0",
+  "description": "## Your Task",
+  "main": "example.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/howl-lab/Team_Profile.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/howl-lab/Team_Profile/issues"
+  },
+  "homepage": "https://github.com/howl-lab/Team_Profile#readme",
+  "dependencies": {
+    "inquire": "^0.4.8"
+  },
+  "devDependencies": {
+    "jest": "^28.1.2"
+  }
+}
