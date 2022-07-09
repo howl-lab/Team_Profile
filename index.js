@@ -1,9 +1,15 @@
 const fs = require('fs');
+const path = require('path');
 const inquirer = require('inquirer');
 const Employee = require('./lib/Employee');
 const Manager = require('./lib/Manager');
 const Intern = require('./lib/Intern');
 const Engineer = require('./lib/Engineer');
+
+// let employeesCard = $('.employeesCard');
+
+// answers get push to these arrays
+const employees = [];
 
 // questions for Manager
 const questionsManager = [
@@ -41,35 +47,33 @@ const questionsManager = [
             'No thanks'
         ]
     },
-
 ];
 
 // questions for Engineer
 const questionsEngineer = [
     {
-        message: "What's your employee name?",
+        message: "Engineer's name?",
         name: 'employeeName',
         type: 'input',
-        default: 'nameless worker'
+        default: 'tech person'
     },
     {
-        message: "What's your employee ID?",
+        message: "Engineer's ID?",
         name: 'employeeID',
         type: 'input',
-        default: '000-00'
+        default: '000'
     },
     {
-        message: "What's your employee email?",
+        message: "Engineer's email?",
         name: 'employeeEmail',
         type: 'input',
-        default: "worker@work.com"
+        default: "eng@work.com"
     },
     {
-        // when: (answers) => answers.employee === 'Engineer',
-        message: "What is the GitHub name?",
+        message: "Engineer's GitHub name?",
         name: 'githubName',
         type: 'input',
-        default: '@some-github-name'
+        default: '@githubname'
     },
     {
         message: "Would you like to add:",
@@ -86,25 +90,25 @@ const questionsEngineer = [
 // questions for Intern
 const questionsIntern = [
     {
-        message: "What's your employee name?",
+        message: "Intern's name?",
         name: 'employeeName',
         type: 'input',
-        default: 'nameless worker'
+        default: 'intern person'
     },
     {
-        message: "What's your employee ID?",
+        message: "Intern's ID?",
         name: 'employeeID',
         type: 'input',
-        default: '000-00'
+        default: '000'
     },
     {
-        message: "What's your employee email?",
+        message: "Intern's email?",
         name: 'employeeEmail',
         type: 'input',
-        default: "worker@work.com"
+        default: "intern@work.com"
     },
     {
-        message: "What's your school name?'",
+        message: "Intern's school?",
         name: 'schoolName',
         type: 'input',
         default: "University of life"
@@ -122,54 +126,106 @@ const questionsIntern = [
 ]
 
 // function to ask follow up questions to Engineer and Intern
-function makeEmployee (employeeQuestions, employeeType) {
-inquirer.prompt (employeeQuestions).then(employee => {
-    // employees.push(employee);
-    if (employeeType === 'Engineer') {
-        const engineer = new Engineer ()
-       engineers.push(engineer) 
-    }else if (employeeType === 'Intern') {
-        const intern = new Intern ()
-        interns.push(intern)
-    }
-    console.log(engineers, interns);
-    if (employee.nextEmployee === 'Engineer') {
-        makeEmployee(questionsEngineer, "Engineer")
-    } else if (employee.nextEmployee === 'Intern') {
-        // makeEmployee(questionsIntern, "Intern");
-    } else {
-        console.log('no more employees')
-    }
-})
-//add .catch
+function makeEmployee(employeeQuestions, employeeType) {
+    inquirer.prompt(employeeQuestions).then(employee => {
+        // employees.push(employee);
+        if (employeeType === 'Engineer') {
+            const engineer = new Engineer(employee.employeeName, employee.employeeID, employee.employeeEmail, employee.githubName);
+            employees.push(engineer)
+        } else if (employeeType === 'Intern') {
+            const intern = new Intern(employee.employeeName, employee.employeeID, employee.employeeEmail, employee.schoolName)
+            employees.push(intern)
+        }
+        if (employee.nextEmployee === 'Engineer') {
+            makeEmployee(questionsEngineer, "Engineer")
+        } else if (employee.nextEmployee === 'Intern') {
+            makeEmployee(questionsIntern, "Intern")
+        } else {
+            console.log('no more employees');
+            fs.writeFileSync(path.join(__dirname, 'dist/team.html'), generateHTML(employees), (err) => {
+                if (err) throw err;
+            })
+        }
+    })
+        .catch((error) => {
+            console.error(error);
+        });
 
 }
 
-// answers get push to these arrays
-const engineers = [];
-const interns = [];
 
 // inquirer to ask the questions
 function init() {
     console.log('im hit');
-    inquirer.prompt(questionsManager).then(managerAnswers => {
+    inquirer.prompt(questionsManager, "Manager").then(managerAnswers => {
         console.log('---- this is the response from the users ----', managerAnswers);
-        // employees.push(managerAnswers);
-        const manager = new Manager (managerAnswers.managerName, managerAnswers.managerID, managerAnswers.managerEmail, managerAnswers.officeNum);
-        // const markdown = generateMarkdown(answers);
-        // console.log('--- log this here ---', markdown);
-        // writeToFile('generated_readme/README', markdown);
+        const manager = new Manager(managerAnswers.managerName, managerAnswers.managerID, managerAnswers.managerEmail, managerAnswers.officeNum);
+        employees.push(manager);
         if (managerAnswers.nextEmployee === 'Engineer') {
             makeEmployee(questionsEngineer, "Engineer")
- 
-        }  else if (managerAnswers.nextEmployee === 'Intern') {
-            // makeEmployee(questionsIntern, "Intern")
+
+        } else if (managerAnswers.nextEmployee === 'Intern') {
+            makeEmployee(questionsIntern, "Intern")
         } else {
-            console.log('no more employees')
+            console.log('no more employees');
+            fs.writeFileSync(path.join(__dirname, 'dist/team.html'), generateHTML(employees), (err) => {
+                if (err) throw err;
+            })
         }
-        // console.log(employees);
     });
 };
+
+//add link to css style sheet or bootstrap
+function generateHTML(employees) {
+    return `
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Profile</title>
+    <link src="./style.css"/>
+</head>
+<body>
+    <div class="employeesCard">
+    ${generateCards(employees)}
+    </div>
+</body>
+
+</html>    
+    `
+}
+
+function generateCards(employees) {
+    let htmlString = '';
+    employees.forEach(employee => {
+        htmlString += employee.generateCard()
+    });
+    return htmlString;
+}
+
+
+// employees.forEach ((employee) => {
+//     employeesCard.push(generateCard);
+// });
+
+// Function call to initialize app
+init();
+
+
+
+
+
+
+
+
+
+
+
+    // const markdown = generateMarkdown(answers);
+        // console.log('--- log this here ---', markdown);
+        // writeToFile('generated_readme/README', markdown);
 
 // create write to file for each person group
 // const jess = new Manager('Jess', 1, '123-123-1234');
@@ -177,5 +233,3 @@ function init() {
 //     if (err) throw err;
 // });
 
-// Function call to initialize app
-init();
