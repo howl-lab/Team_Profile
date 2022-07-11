@@ -6,9 +6,7 @@ const Manager = require('./lib/Manager');
 const Intern = require('./lib/Intern');
 const Engineer = require('./lib/Engineer');
 
-// let employeesCard = $('.employeesCard');
-
-// answers get push to these arrays
+// manager, engineer, intern answers get push to this array
 const employees = [];
 
 // questions for Manager
@@ -17,19 +15,19 @@ const questionsManager = [
         message: "What's your name?",
         name: 'managerName',
         type: 'input',
-        default: 'nameless worker'
+        default: 'The Boss'
     },
     {
         message: "What's your employee ID?",
         name: 'managerID',
         type: 'input',
-        default: '000-00'
+        default: '007'
     },
     {
         message: "What's your email?",
         name: 'managerEmail',
         type: 'input',
-        default: "worker@work.com"
+        default: "boss@work.com"
     },
     {
         message: "What is the office number?",
@@ -55,25 +53,25 @@ const questionsEngineer = [
         message: "Engineer's name?",
         name: 'employeeName',
         type: 'input',
-        default: 'tech person'
+        default: 'Hack'
     },
     {
         message: "Engineer's ID?",
         name: 'employeeID',
         type: 'input',
-        default: '000'
+        default: '010'
     },
     {
         message: "Engineer's email?",
         name: 'employeeEmail',
         type: 'input',
-        default: "eng@work.com"
+        default: "hack@work.com"
     },
     {
         message: "Engineer's GitHub name?",
         name: 'githubName',
         type: 'input',
-        default: '@githubname'
+        default: '@notahacker'
     },
     {
         message: "Would you like to add:",
@@ -93,19 +91,19 @@ const questionsIntern = [
         message: "Intern's name?",
         name: 'employeeName',
         type: 'input',
-        default: 'intern person'
+        default: 'Newbie'
     },
     {
         message: "Intern's ID?",
         name: 'employeeID',
         type: 'input',
-        default: '000'
+        default: '123'
     },
     {
         message: "Intern's email?",
         name: 'employeeEmail',
         type: 'input',
-        default: "intern@work.com"
+        default: "newbie@work.com"
     },
     {
         message: "Intern's school?",
@@ -125,10 +123,9 @@ const questionsIntern = [
     },
 ]
 
-// function to ask follow up questions to Engineer and Intern
+// function to ask follow up questions for Engineer or Intern
 function makeEmployee(employeeQuestions, employeeType) {
     inquirer.prompt(employeeQuestions).then(employee => {
-        // employees.push(employee);
         if (employeeType === 'Engineer') {
             const engineer = new Engineer(employee.employeeName, employee.employeeID, employee.employeeEmail, employee.githubName);
             employees.push(engineer)
@@ -139,7 +136,7 @@ function makeEmployee(employeeQuestions, employeeType) {
         if (employee.nextEmployee === 'Engineer') {
             makeEmployee(questionsEngineer, "Engineer")
         } else if (employee.nextEmployee === 'Intern') {
-            makeEmployee(questionsIntern, "Intern")
+            makeEmployee(questionsIntern, 'Intern')
         } else {
             console.log('no more employees');
             fs.writeFileSync(path.join(__dirname, 'dist/team.html'), generateHTML(employees), (err) => {
@@ -154,7 +151,10 @@ function makeEmployee(employeeQuestions, employeeType) {
 }
 
 
-// inquirer to ask the questions
+// inquirer to ask the questions for manager
+//manager can add an extra employee of engineer or intern
+//or none which will end the prompts and call the fs writeFileSync function
+// Manager's answers will be pushed to an employees array
 function init() {
     console.log('im hit');
     inquirer.prompt(questionsManager, "Manager").then(managerAnswers => {
@@ -162,8 +162,7 @@ function init() {
         const manager = new Manager(managerAnswers.managerName, managerAnswers.managerID, managerAnswers.managerEmail, managerAnswers.officeNum);
         employees.push(manager);
         if (managerAnswers.nextEmployee === 'Engineer') {
-            makeEmployee(questionsEngineer, "Engineer")
-
+            makeEmployee(questionsEngineer, 'Engineer')
         } else if (managerAnswers.nextEmployee === 'Intern') {
             makeEmployee(questionsIntern, "Intern")
         } else {
@@ -175,7 +174,7 @@ function init() {
     });
 };
 
-//add link to css style sheet or bootstrap
+//function to generate HTML elements (inside)
 function generateHTML(employees) {
     return `
     <!DOCTYPE html>
@@ -185,10 +184,16 @@ function generateHTML(employees) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Team Profile</title>
-    <link src="./style.css"/>
+    <!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <link rel="stylesheet" href="./style.css"/>
 </head>
 <body>
-    <div class="employeesCard">
+<div class="header">
+<h1 class="teamName">The A Team 🚀</h1>
+</div>
+
+    <div class="teamProfile">
     ${generateCards(employees)}
     </div>
 </body>
@@ -197,6 +202,7 @@ function generateHTML(employees) {
     `
 }
 
+//generate cards for each employee item
 function generateCards(employees) {
     let htmlString = '';
     employees.forEach(employee => {
@@ -205,10 +211,6 @@ function generateCards(employees) {
     return htmlString;
 }
 
-
-// employees.forEach ((employee) => {
-//     employeesCard.push(generateCard);
-// });
 
 // Function call to initialize app
 init();
@@ -219,13 +221,6 @@ init();
 
 
 
-
-
-
-
-    // const markdown = generateMarkdown(answers);
-        // console.log('--- log this here ---', markdown);
-        // writeToFile('generated_readme/README', markdown);
 
 // create write to file for each person group
 // const jess = new Manager('Jess', 1, '123-123-1234');

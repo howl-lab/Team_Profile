@@ -1,0 +1,27 @@
+.teamProfile {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 24px;
+}
+
+.card {
+    width: 240px;
+    padding: 24px;
+    margin: 16px;
+}
+
+.header {
+    display: flex;
+    width: 100%;
+    padding: 32px;
+    background: black;
+    color: white;
+}
+
+.teamName {
+    text-align: center;
+}
+
+.details {
+    padding-top: 24px;
+}
