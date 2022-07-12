@@ -83,7 +83,7 @@ const questionsEngineer = [
             'No thanks'
         ]
     },
-]
+];
 
 // questions for Intern
 const questionsIntern = [
@@ -121,7 +121,7 @@ const questionsIntern = [
             'No thanks'
         ]
     },
-]
+];
 
 // function to ask follow up questions for Engineer or Intern
 function makeEmployee(employeeQuestions, employeeType) {
@@ -141,14 +141,14 @@ function makeEmployee(employeeQuestions, employeeType) {
             console.log('no more employees');
             fs.writeFileSync(path.join(__dirname, 'dist/team.html'), generateHTML(employees), (err) => {
                 if (err) throw err;
-            })
-        }
+            });
+        };
     })
         .catch((error) => {
             console.error(error);
         });
 
-}
+};
 
 
 // inquirer to ask the questions for manager
@@ -169,8 +169,8 @@ function init() {
             console.log('no more employees');
             fs.writeFileSync(path.join(__dirname, 'dist/team.html'), generateHTML(employees), (err) => {
                 if (err) throw err;
-            })
-        }
+            });
+        };
     });
 };
 
@@ -200,7 +200,7 @@ function generateHTML(employees) {
 
 </html>    
     `
-}
+};
 
 //generate cards for each employee item
 function generateCards(employees) {
@@ -209,22 +209,8 @@ function generateCards(employees) {
         htmlString += employee.generateCard()
     });
     return htmlString;
-}
-
+};
 
 // Function call to initialize app
 init();
-
-
-
-
-
-
-
-
-// create write to file for each person group
-// const jess = new Manager('Jess', 1, '123-123-1234');
-// fs.writeFile('dist/team.html', jess.generateCard(), (err) => {
-//     if (err) throw err;
-// });
 
