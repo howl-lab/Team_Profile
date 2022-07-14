@@ -35,7 +35,9 @@ THEN that GitHub profile opens in a new tab
 ### Preview
 
 The following images show the web application's appearance and functionality:
+<a href="https://drive.google.com/file/d/1SLODOwGTGnEMiefLI8U4twe9-EiuBf0B/view?usp=sharing" target="_blank">Link to video demo</a>
 
+Here are more visual demonstrations of the working application:
 ![command-line prompts to ask manager for their info plus any additional employees](./assets/10-team-prompts.gif)
 
 ![Generated HTML from command-line prompts and answers](./assets/10-team-generateHTML.gif)
